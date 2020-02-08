@@ -455,6 +455,7 @@ sub options {
         first_layer_acceleration default_acceleration
         skirts skirt_distance skirt_height min_skirt_length
         brim_connections_width brim_ears brim_ears_max_angle brim_width interior_brim_width
+        purgeline_length purgeline_pos_x purgeline_pos_y purgeline_speed
         support_material support_material_threshold support_material_max_layers support_material_enforce_layers
         raft_layers
         support_material_pattern support_material_spacing support_material_angle
@@ -597,6 +598,13 @@ sub build {
             $optgroup->append_single_option_line('brim_ears_max_angle');
             $optgroup->append_single_option_line('interior_brim_width');
             $optgroup->append_single_option_line('brim_connections_width');
+        }
+        {
+            my $optgroup = $page->new_optgroup('Purge');
+            $optgroup->append_single_option_line('purgeline_length');
+            $optgroup->append_single_option_line('purgeline_pos_x');
+            $optgroup->append_single_option_line('purgeline_pos_y');
+            $optgroup->append_single_option_line('purgeline_speed')
         }
     }
     
@@ -954,6 +962,11 @@ sub _update {
     $self->get_field('brim_ears')->toggle($have_brim);
     $self->get_field('brim_ears_max_angle')->toggle($have_brim && $config->brim_ears);
     
+    my $have_purgeline = $config->purgeline_length > 0;
+    $self->get_field($_)->toggle($have_purgeline)
+        for qw(purgeline_pos_x purgeline_pos_y purgeline_speed);
+
+
     my $have_support_material = $config->support_material || $config->raft_layers > 0;
     my $have_support_interface = $config->support_material_interface_layers > 0;
     my $have_support_pillars = $have_support_material && $config->support_material_pattern eq 'pillars';
